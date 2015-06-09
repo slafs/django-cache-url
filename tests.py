@@ -240,3 +240,154 @@ class TestHiredisPrefixSocketCache(TestRedisPrefixSocketCache):
         config = django_cache_url.config()
         assert_equals(config['OPTIONS']['PARSER_CLASS'],
                       'redis.connection.HiredisParser')
+
+
+class TestDjRedisCache(Base):
+    def setUp(self):
+        super(TestDjRedisCache, self).setUp()
+        environ['CACHE_URL'] = 'djredis://127.0.0.1:6379/0/prefix'
+
+    def test_redis_url_returns_redis_cache(self):
+        location = 'django_redis.cache.RedisCache'
+        config = django_cache_url.config()
+        assert_equals(config['BACKEND'], location)
+
+    def test_redis_url_returns_location_and_port_from_url(self):
+        config = django_cache_url.config()
+        assert_equals(config['LOCATION'], 'redis://127.0.0.1:6379?db=0')
+
+    def test_redis_url_returns_prefix_from_url(self):
+        config = django_cache_url.config()
+        assert_equals(config['KEY_PREFIX'], 'prefix')
+
+
+class TestDjRedisSSLCache(Base):
+    def setUp(self):
+        super(TestDjRedisSSLCache, self).setUp()
+        environ['CACHE_URL'] = 'djrediss://127.0.0.1:6379/0/prefix'
+
+    def test_redis_url_returns_redis_cache(self):
+        location = 'django_redis.cache.RedisCache'
+        config = django_cache_url.config()
+        assert_equals(config['BACKEND'], location)
+
+    def test_redis_url_returns_location_and_port_from_url(self):
+        config = django_cache_url.config()
+        assert_equals(config['LOCATION'], 'rediss://127.0.0.1:6379?db=0')
+
+    def test_redis_url_returns_prefix_from_url(self):
+        config = django_cache_url.config()
+        assert_equals(config['KEY_PREFIX'], 'prefix')
+
+
+class TestDjHiRedisCache(Base):
+    def setUp(self):
+        super(TestDjHiRedisCache, self).setUp()
+        environ['CACHE_URL'] = 'djhiredis://127.0.0.1:6379/0/prefix'
+
+    def test_redis_url_returns_redis_cache(self):
+        location = 'django_redis.cache.RedisCache'
+        config = django_cache_url.config()
+        assert_equals(config['BACKEND'], location)
+
+    def test_redis_url_returns_location_and_port_from_url(self):
+        config = django_cache_url.config()
+        assert_equals(config['LOCATION'], 'redis://127.0.0.1:6379?db=0')
+
+    def test_redis_url_returns_prefix_from_url(self):
+        config = django_cache_url.config()
+        assert_equals(config['KEY_PREFIX'], 'prefix')
+
+    def test_hiredis_url_sets_hiredis_parser(self):
+        config = django_cache_url.config()
+        assert_equals(config['OPTIONS']['PARSER_CLASS'],
+                      'redis.connection.HiredisParser')
+
+
+class TestDjHiRedisSSLCache(Base):
+    def setUp(self):
+        super(TestDjHiRedisSSLCache, self).setUp()
+        environ['CACHE_URL'] = 'djhirediss://127.0.0.1:6379/0/prefix'
+
+    def test_redis_url_returns_redis_cache(self):
+        location = 'django_redis.cache.RedisCache'
+        config = django_cache_url.config()
+        assert_equals(config['BACKEND'], location)
+
+    def test_redis_url_returns_location_and_port_from_url(self):
+        config = django_cache_url.config()
+        assert_equals(config['LOCATION'], 'rediss://127.0.0.1:6379?db=0')
+
+    def test_redis_url_returns_prefix_from_url(self):
+        config = django_cache_url.config()
+        assert_equals(config['KEY_PREFIX'], 'prefix')
+
+    def test_hiredis_url_sets_hiredis_parser(self):
+        config = django_cache_url.config()
+        assert_equals(config['OPTIONS']['PARSER_CLASS'],
+                      'redis.connection.HiredisParser')
+
+
+class TestDjRedisBothSocketCache(Base):
+    def setUp(self):
+        super(TestDjRedisBothSocketCache, self).setUp()
+        environ['CACHE_URL'] = 'djredisunix:///path/to/socket/file.sock?db=1&prefix=prefix'
+
+    def test_socket_url_returns_redis_cache(self):
+        location = 'django_redis.cache.RedisCache'
+        config = django_cache_url.config()
+        assert_equals(config['BACKEND'], location)
+
+    def test_socket_url_returns_location_and_port_from_url(self):
+        config = django_cache_url.config()
+        assert_equals(config['LOCATION'], 'unix://@/path/to/socket/file.sock?db=1')
+
+    def test_socket_url_returns_prefix_from_url(self):
+        config = django_cache_url.config()
+        assert_equals(config['KEY_PREFIX'], 'prefix')
+
+
+class TestDjRedisDatabaseSocketCache(TestDjRedisBothSocketCache):
+    def setUp(self):
+        super(TestDjRedisDatabaseSocketCache, self).setUp()
+        environ['CACHE_URL'] = 'djredisunix:///path/to/socket/file.sock?db=1'
+
+    def test_socket_url_returns_prefix_from_url(self):
+        config = django_cache_url.config()
+        assert_equals(config['KEY_PREFIX'], '')
+
+
+class TestDjRedisPrefixSocketCache(TestDjRedisBothSocketCache):
+    def setUp(self):
+        super(TestDjRedisPrefixSocketCache, self).setUp()
+        environ['CACHE_URL'] = 'djredisunix:///path/to/socket/file.sock?prefix=prefix'
+
+    def test_socket_url_returns_location_and_port_from_url(self):
+        config = django_cache_url.config()
+        assert_equals(config['LOCATION'], 'unix://@/path/to/socket/file.sock?db=0')
+
+    def test_socket_url_returns_prefix_from_url(self):
+        config = django_cache_url.config()
+        assert_equals(config['KEY_PREFIX'], 'prefix')
+
+
+class TestDjHiredisDatabaseSocketCache(TestDjRedisDatabaseSocketCache):
+    def setUp(self):
+        super(TestDjHiredisDatabaseSocketCache, self).setUp()
+        environ['CACHE_URL'] = 'djhiredisunix:///path/to/socket/file.sock?db=1'
+
+    def test_hiredis_url_sets_hiredis_parser(self):
+        config = django_cache_url.config()
+        assert_equals(config['OPTIONS']['PARSER_CLASS'],
+                      'redis.connection.HiredisParser')
+
+
+class TestDjHiredisPrefixSocketCache(TestDjRedisPrefixSocketCache):
+    def setUp(self):
+        super(TestDjHiredisPrefixSocketCache, self).setUp()
+        environ['CACHE_URL'] = 'djhiredisunix:///path/to/socket/file.sock?prefix=prefix'
+
+    def test_hiredis_url_sets_hiredis_parser(self):
+        config = django_cache_url.config()
+        assert_equals(config['OPTIONS']['PARSER_CLASS'],
+                      'redis.connection.HiredisParser')

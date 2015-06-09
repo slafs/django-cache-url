@@ -39,6 +39,19 @@ Support currently exists for:
 * redis: ``'redis://t@host:port/db[/prefix]'`` or ``'redis:///unix/path/to/socket/file.sock/db[/prefix]'`` For use with django-redis library.
 * hiredis ``'hiredis://host:port/db[/prefix]'`` or ``'hiredis:///unix/path/to/socket/file.sock/db[/prefix]'`` For use with django-redis library using
   HiredisParser
+* djredis, djrediss, djredisunix: For new django-redis (>=3.8.0) ``LOCATION`` url syntax.
+  Examples:
+
+  - ``'djredis://:password@host:port/db/prefix'``,
+  - ``'djredis://:password@host:port?db=0&prefix=mykeyprefix'``,
+  - ``'djhiredisunix:///path/to/file.sock?db=0&prefix=mykeyprefix'``
+
+  (``password``, ``port``, ``db`` and ``prefix`` are optional).
+  See `django-redis documentation`_
+
+* djhiredis, djhirediss, djhiredisunix: Same as above but with ``'redis.connection.HiredisParser'`` as a ``'PARSER_CLASS'``.
+
+.. _django-redis documentation: http://niwinz.github.io/django-redis/latest/#_configure_as_cache_backend
 
 Installation
 ------------
